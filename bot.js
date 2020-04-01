@@ -10,15 +10,18 @@ client.on('ready', () => {
 client.login(token);
 
 client.on('message', msg => {
-    if (!msg.content.startsWith(prefix)) return;
+    //If the message doesn't start with our prefix or a bot sent it, exit early
+    if (!msg.content.startsWith(prefix) || msg.author.bot) return;
 
-    //Get indexes for brackets to be able to grab out the value provided
-    const indexOfFirstBracket = msg.content.indexOf('[');
-    const indexOfSecondBracket = msg.content.indexOf(']');
+    //Create args which will remove the prefix and move args to an array
+    const args = msg.content.slice(prefix.length).split(/ +/);
+    const command = args.shift().toLowerCase();
 
-    //Get the Value of what is being rolled without brackets
-    const diceCountWithDiceSize = msg.content.substring(indexOfFirstBracket + 1, indexOfSecondBracket);
+    //USE FOR DEBUGGING WHAT COMMANDS WERE PROVIDED
+    //msg.channel.send(`Command name: ${command}\nArguments: ${args}`);
 
+    //TODO: Change this to look at multiple arguments
+    const diceCountWithDiceSize = args[0];
     let numberOfDiceToRoll;
     let dieSizeToRoll;
     if (diceCountWithDiceSize.indexOf("d") === 0) {
