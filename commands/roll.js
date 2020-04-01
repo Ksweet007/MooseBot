@@ -2,14 +2,14 @@ module.exports = {
     name: 'roll',
     description: 'Dice Roller',
     execute(msg, args) {
-        const totalRoll = DoWork(msg, args);
+        const totalRoll = RollMultipleGroupsOfDice(msg, args);
         msg.reply(`You rolled a ${totalRoll}`);
     },
 };
 
-function DoWork(msg, args) {
+function RollMultipleGroupsOfDice(msg, diceGroups) {
     let totalRoll = 0;
-    args.forEach(diceRoll => {
+    diceGroups.forEach(diceRoll => {
         const [numberOfDiceToRoll, sizeOfDiceToRoll] = GetNumberOfDiceAndSizeOfDice(diceRoll);
         const thisRoll = Roll(numberOfDiceToRoll, sizeOfDiceToRoll);
         totalRoll += thisRoll;
