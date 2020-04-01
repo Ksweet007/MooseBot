@@ -1,25 +1,39 @@
+module.exports = {
+    name: 'rollabilityscore',
+    description: 'Dice Roller For Ability Scores',
+    execute(msg, args) {
+        const totalRoll = RollMultipleGroupsOfDice(msg, args);
+        msg.reply(`You rolled a ${totalRoll}`);
+    },
+};
+
 function RollMultipleGroupsOfDice(msg, diceGroups) {
-    let totalRoll = 0;
+    let arrayOfRolls = [];
+
     diceGroups.forEach(diceRoll => {
         const [numberOfDiceToRoll, sizeOfDiceToRoll] = GetNumberOfDiceAndSizeOfDice(diceRoll);
         const thisRoll = Roll(numberOfDiceToRoll, sizeOfDiceToRoll, msg);
-        totalRoll += thisRoll;
-        msg.channel.send(`${diceRoll} Rolled a ${thisRoll}`);
+
+        arrayOfRolls.push(thisRoll);
     })
-    return totalRoll;
+    return arrayOfRolls.reduce(addTogetherRolls, 0);
 }
 
 function Roll(numberOfDiceToRoll, sizeOfDiceToRoll, msg) {
-    let totalValue = 0;
     let rollArray = [];
     for (let i = 0; i < numberOfDiceToRoll; i++) {
         const rolledValue = (1 + Math.floor(Math.random() * sizeOfDiceToRoll));
         rollArray.push(rolledValue);
-        totalValue += rolledValue;
     }
+
     rollArray.sort(function (a, b) { return a - b });
-    msg.channel.send(`${rollArray}`);
-    return totalValue;
+
+    const rollArrayCopy = [...rollArray];
+    const droppedScore = rollArray.shift();
+
+    msg.channel.send(`Rolled ${rollArrayCopy} - Dropped ${droppedScore}`);
+
+    return rollArray.reduce(addTogetherRolls, 0);
 }
 
 function GetNumberOfDiceAndSizeOfDice(diceRoll) {
@@ -37,8 +51,9 @@ function GetNumberOfDiceAndSizeOfDice(diceRoll) {
         dieSizeToRoll = diceRoll.substring(diceRoll.indexOf("d") + 1) === "" ? 0 : diceRoll.substring(diceRoll.indexOf("d") + 1);
     }
 
-
     return [parseInt(numberOfDiceToRoll), parseInt(dieSizeToRoll)];
 }
 
-module.exports = { RollMultipleGroupsOfDice, Roll, GetNumberOfDiceAndSizeOfDice }
+function addTogetherRolls(total, num) {
+    return total + num;
+}

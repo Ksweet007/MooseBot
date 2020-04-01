@@ -31,6 +31,12 @@ test('GetNumberOfDiceAndSizeOfDice Returns 2 die of size 0 Given 2d', () => {
     expect(sizeOfDiceToRoll).toBe(0);
 });
 
+test('GetNumberOfDiceAndSizeOfDice Returns 20 die of size 6 Given 20d6', () => {
+    const [numberOfDiceToRoll, sizeOfDiceToRoll] = GetNumberOfDiceAndSizeOfDice("20d6");
+    expect(numberOfDiceToRoll).toBe(20);
+    expect(sizeOfDiceToRoll).toBe(6);
+});
+
 //Roll function tests
 test('Roll Returns value greater than 0 And less than or equal to 6 Given 1d6', () => {
     const valueRolled = Roll(1, 6);
