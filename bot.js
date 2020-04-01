@@ -1,13 +1,13 @@
-// Run dotenv
+require('dotenv').config();
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const { prefix } = require('./config.json');
 const client = new Discord.Client();
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.login(token);
+client.login(process.env.DISCORD_TOKEN);
 
 client.on('message', msg => {
     //If the message doesn't start with our prefix or a bot sent it, exit early
@@ -17,26 +17,17 @@ client.on('message', msg => {
     const args = msg.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
-    //USE FOR DEBUGGING WHAT COMMANDS WERE PROVIDED
-    //msg.channel.send(`Command name: ${command}\nArguments: ${args}`);
+    if (!command.toLowerCase() === "roll") return;
 
-    //TODO: Change this to look at multiple arguments
-    const diceCountWithDiceSize = args[0];
-    let numberOfDiceToRoll;
-    let dieSizeToRoll;
-    if (diceCountWithDiceSize.indexOf("d") === 0) {
-        //Rolling a single dice
-        numberOfDiceToRoll = 1;
-        dieSizeToRoll = diceCountWithDiceSize.substring(1)
-    }
-    else {
-        //Rolling multiple dice
-        dieSizeToRoll = diceCountWithDiceSize.substring(2);
-        numberOfDiceToRoll = diceCountWithDiceSize.substring(0, diceCountWithDiceSize.indexOf("d"));
-    }
+    let totalRollValue = 0;
+    args.forEach(diceRoll => {
+        //Roll for each of the supplied arguments
+        let rollValue = HandleRoll(diceRoll);
+        totalRollValue += rollValue;
+        msg.channel.send(`${diceRoll} Rolled a ${rollValue}`);
+    });
 
-    const valueRolled = Roll(numberOfDiceToRoll, dieSizeToRoll);
-    msg.reply(`Rolled a ${valueRolled}`)
+    msg.reply(`Rolled a ${totalRollValue}`)
 
 });
 
@@ -48,4 +39,21 @@ function Roll(numberOfDiceToRoll, dieSizeToRoll) {
     }
 
     return totalValue;
+}
+
+function HandleRoll(diceRoll) {
+    let numberOfDiceToRoll;
+    let dieSizeToRoll;
+    if (diceRoll.indexOf("d") === 0) {
+        //Rolling a single dice
+        numberOfDiceToRoll = 1;
+        dieSizeToRoll = diceRoll.substring(1)
+    }
+    else {
+        //Rolling multiple dice
+        dieSizeToRoll = diceRoll.substring(2);
+        numberOfDiceToRoll = diceRoll.substring(0, diceRoll.indexOf("d"));
+    }
+
+    return Roll(numberOfDiceToRoll, dieSizeToRoll);
 }
