@@ -1,0 +1,13 @@
+{
+    "name": "diceroller-bot",
+    "version": "1.0.0",
+    "description": "A Bot for rolling dice",
+    "main": "bot.js",
+    "author": "Kyle Sweet",
+    "dependencies": {
+        "discord.io": "^2.5.3",
+        "discord.js": "^12.1.1",
+        "dotenv": "^8.2.0",
+        "winston": "^3.2.1"
+    }
+}
