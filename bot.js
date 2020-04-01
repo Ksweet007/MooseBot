@@ -25,7 +25,7 @@ client.on('message', msg => {
     const args = msg.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
 
-    if (!command.toLowerCase() === "roll") return;
+    if (!client.commands.has(command)) return;
 
     try {
         client.commands.get(command).execute(msg, args);
