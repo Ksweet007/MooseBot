@@ -21,17 +21,15 @@ function RollMultipleGroupsOfDice(msg, diceGroups) {
 }
 
 function Roll(numberOfDiceToRoll, sizeOfDiceToRoll, msg) {
-    let totalValue = 0;
     let rollArray = [];
     for (let i = 0; i < numberOfDiceToRoll; i++) {
         const rolledValue = (1 + Math.floor(Math.random() * sizeOfDiceToRoll));
         rollArray.push(rolledValue);
-        totalValue += rolledValue;
     }
     rollArray.sort(function (a, b) { return a - b });
     msg.channel.send(`${rollArray}`);
 
-    return totalValue;
+    return rollArray.reduce(addTogetherRolls, 0);
 }
 
 function addTogetherRolls(total, num) {
