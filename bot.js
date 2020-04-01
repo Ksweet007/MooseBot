@@ -27,6 +27,11 @@ client.on('message', msg => {
 
     if (!client.commands.has(command)) return;
 
+    if (msg.author.username === "FChopin666") {
+        msg.channel.send("Sorry, Gai Bois can't use the dice roller.");
+        return;
+    }
+
     try {
         client.commands.get(command).execute(msg, args);
     } catch (error) {
