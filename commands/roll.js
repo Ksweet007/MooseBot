@@ -8,3 +8,5 @@ module.exports = {
         msg.reply(`You rolled a ${totalRoll}`);
     },
 };
+
+//([1-9][0-9]*)d([1-9][0-9]*)\+([0-9]*)
