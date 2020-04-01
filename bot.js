@@ -1,7 +1,15 @@
 require('dotenv').config();
+const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix } = require('./config.json');
 const client = new Discord.Client();
+client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command);
+}
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -19,41 +27,10 @@ client.on('message', msg => {
 
     if (!command.toLowerCase() === "roll") return;
 
-    let totalRollValue = 0;
-    args.forEach(diceRoll => {
-        //Roll for each of the supplied arguments
-        let rollValue = HandleRoll(diceRoll);
-        totalRollValue += rollValue;
-        msg.channel.send(`${diceRoll} Rolled a ${rollValue}`);
-    });
-
-    msg.reply(`Rolled a ${totalRollValue}`)
-
+    try {
+        client.commands.get(command).execute(msg, args);
+    } catch (error) {
+        console.error(error);
+        msg.reply('there was an error trying to execute that command!');
+    }
 });
-
-
-function Roll(numberOfDiceToRoll, dieSizeToRoll) {
-    let totalValue = 0;
-    for (let i = 0; i < numberOfDiceToRoll; i++) {
-        totalValue += (1 + Math.floor(Math.random() * dieSizeToRoll))
-    }
-
-    return totalValue;
-}
-
-function HandleRoll(diceRoll) {
-    let numberOfDiceToRoll;
-    let dieSizeToRoll;
-    if (diceRoll.indexOf("d") === 0) {
-        //Rolling a single dice
-        numberOfDiceToRoll = 1;
-        dieSizeToRoll = diceRoll.substring(1)
-    }
-    else {
-        //Rolling multiple dice
-        dieSizeToRoll = diceRoll.substring(2);
-        numberOfDiceToRoll = diceRoll.substring(0, diceRoll.indexOf("d"));
-    }
-
-    return Roll(numberOfDiceToRoll, dieSizeToRoll);
-}
